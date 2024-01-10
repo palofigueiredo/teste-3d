@@ -8,23 +8,17 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize( 1024, 1024 );
 document.body.appendChild( renderer.domElement );
 
-const geometry = new THREE.BoxGeometry(3, 3, 3); 
+const geometry = new THREE.BoxGeometry(1, 1, 1); 
 const material = new THREE.MeshBasicMaterial({color: 0x00ff00, wireframe: true});
 const cube = new THREE.Mesh( geometry, material ); 
 scene.add( cube );
 
 // camera.position.x = 1;
-camera.position.z = 5;
+camera.position.z = 2;
 camera.position.y = .2;
 
-// const meshPosition = cube.position;
-// Set the camera's position
-// camera.position.set(meshPosition.x, meshPosition.y, meshPosition.z);
-// Set the camera's looking direction
-// camera.lookAt(cube);
-
 const grid = new THREE.GridHelper();
-// scene.add(grid);
+scene.add(grid);
 
 
 function animate() {
