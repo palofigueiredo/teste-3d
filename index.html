@@ -2,7 +2,7 @@
 <html lang="pt-pt">
 	<head>
 		<meta charset="utf-8">
-		<title>three.js</title>
+		<title>three.js teste Paulo</title>
 		<style>
             * {
                 padding: 0;
@@ -40,10 +40,12 @@
 		</style>
 	</head>
 	<body>
+        <div id="container"></div>
         <div class="nav">
-            <button class="btn" data-value="2">Top</button>
-            <button class="btn" data-value="3">Side</button>
-            <button class="btn" data-value="1">Front</button>
+            <button class="btn" data-value="2" style="z-index:3">Top 2</button>
+            <button class="btn" data-value="3" style="z-index:3">Side 3</button>
+            <button class="btn" data-value="1" style="z-index:3">Front 1</button>
+            <button class="btn" data-value="0" style="z-index:3">Reset 0</button>
         </div>
         <div class="three"></div>
 		<script type="module" src="/main.js" defer></script>
