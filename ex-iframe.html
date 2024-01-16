@@ -6,13 +6,25 @@
     <title>Document</title>
     <style>
         body{
-            background-color: blueviolet;
+            /* background-color: blueviolet; */
         }
     </style>
 </head>
-<body>
+<body id="iframebody">
     <h1>I'm an iframe</h1>
-    <p>Example text</p>
-    
+    <button id='clickme'>ClickMe</button>
+
+    <script>
+        let iframebutton = document.querySelector('#clickme')
+        let iframebody = document.querySelector('#iframebody')
+        iframebutton.addEventListener('click', event => {
+            if(iframebody.style.backgroundColor!='rgb(200,0,0)'){
+                iframebody.style.backgroundColor='rgb(200,0,0)';
+            }else if(iframebody.style.backgroundColor=='rgb(200,0,0)'){
+                iframebody.style.backgroundColor='rgb(0,200,0)';
+            }
+            
+        })
+    </script>
 </body>
 </html>
