@@ -10,6 +10,13 @@ const sizes = {
     height:window.innerHeight
 }
 
+const intDisplaySizes = {
+    width: '480px' ,
+    height: '640px',
+    widthnum: 480,
+    heightnum:640
+}
+
 const scene = new THREE.Scene(); // Where the objects will be placed in order to be displayed
 
 // GRID for reference for a "ground" (horizontal plane at y=0)
@@ -37,6 +44,7 @@ renderercss3d.domElement.style.position = 'absolute'
 // placing both renderer on the page
 // ORDER IS IMPORTANT, as we want the elements on the CSS3D Renderer to be interactive, so they need to be "on top" of the WebGL ones.
 document.body.appendChild( rendererwebgl.domElement );
+
 document.body.appendChild( renderercss3d.domElement );
 
 
@@ -70,7 +78,8 @@ const displaygeom2 = new THREE.PlaneGeometry(0.5,0.5);
 const displaywebgl2 = new THREE.Mesh(displaygeom2, new THREE.MeshBasicMaterial({color:0x224466}))
 displaywebgl2.position.y=1
 displaywebgl2.position.z=0.5
-displaywebgl2.rotateX(4)
+displaywebgl2.position.x=0;
+displaywebgl2.rotateX(4);
 
 scene.add(displaywebgl2)
 
@@ -85,27 +94,36 @@ scene.add(axesHelper)
 
 
 // Creating elements that will be placed in the CSS3D Renderer
+
 const div3d = document.createElement( 'div' );
 div3d.id="div3d";
-div3d.style.width = '300px'
+div3d.style.width = intDisplaySizes.width;
+div3d.style.height = intDisplaySizes.height;
+div3d.style.backfaceVisibility= 'hidden';
+div3d.style.transformStyle = 'preserve-3d';
+
 // div3d.style.pointerEvents = 'auto' // not needed, but was recommended to make sure elements in the div will be clickable
 div3d.style.backgroundColor = '#ff111133'; // red-ish with transparency
 
 const iframe = document.createElement( 'iframe' );
-iframe.style.width = '300px';
+iframe.style.width = intDisplaySizes.width;
+iframe.style.height = intDisplaySizes.height;
 // iframe.style.height = '3px';
 iframe.style.border = '1px solid black';
 iframe.style.zIndex = 2;
 iframe.style.pointerEvents = 'auto';
-iframe.src = './ex-iframe.html';
+// iframe.src = './iframe3dcontent.html';
+iframe.src = './menu.html';
+iframe.style.backfaceVisibility = 'hidden'
 div3d.appendChild( iframe );
+
 
 
 const object3d = new CSS3DObject( div3d );
 
 // object3d.scale.set(1/(sizes.width),1/(sizes.width))
 // object3d.scale.set(0.005,0.005)
-object3d.scale.set(1/300,1/300)
+object3d.scale.set(1/intDisplaySizes.widthnum,1/intDisplaySizes.heightnum)
 
 object3d.position.set( 0, 1, 1 );
 object3d.rotateX(-0.5)
@@ -132,19 +150,27 @@ camera.lookAt(cube.position);
 // // const controls = new OrbitControls(camera, scene)
 // // OrbitControls are not working
 // (if you want to freely move the camera de-select the lines below and also the "Mouse camera controls" inside the animate() function right below)
-const cursor = {
-    x:0,
-    y:0
-}
-window.addEventListener('mousemove', (event) => { 
-    cursor.x=2*event.clientX / sizes.width - 0.5
-    cursor.y= - 3*(event.clientY / sizes.height - 0.5)
-    console.log(cursor.x + ' , ' + cursor.y)
-    })
+    const cursor = {
+        x:0,
+        y:0
+    }
+    window.addEventListener('mousemove', (event) => { 
+        cursor.x=2*event.clientX / sizes.width - 0.5
+        cursor.y= - 3*(event.clientY / sizes.height - 0.5)
+        // console.log(cursor.x + ' , ' + cursor.y)
+        })
 // // Obs: Camera is updated in animate()
 
-
-
+window.addEventListener('camera.position.z', () => {
+    if(camera.position.z<1){
+        console.log('funciona')
+        div3d.style.visibility='hidden';
+    }else{
+        div3d.style.visibility='visible'
+    }
+})
+var testerposition = false;
+var freecamera = false;
 function animate() {
     camera.lookAt(cube.position);
 	requestAnimationFrame( animate );
@@ -155,14 +181,33 @@ function animate() {
     //Mouse camera controls (to activate, de-comment everything below and also the "controls" section just above
     // // controls.update();
     // //Update Camera (manual camera movement - to activate deselect lines below)
-    camera.position.x = cursor.x*10
-    camera.position.y = cursor.y*10
-    camera.position.x = Math.sin(cursor.x * Math.PI * 2) * 3
-    camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 3
-    camera.position.y = cursor.y * 5
-    camera.lookAt(new THREE.Vector3())
-    camera.lookAt(cube.position)
+        if(freecamera==true){
+            camera.position.x = cursor.x*10
+        camera.position.y = cursor.y*10
+        camera.position.x = Math.sin(cursor.x * Math.PI * 2) * 3
+        camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 3
+        camera.position.y = cursor.y * 5
+        camera.lookAt(new THREE.Vector3())
+        camera.lookAt(cube.position)
+        }
+        
     //End of Update Camera
+
+    // Hiding css3d display
+    if(camera.position.z<1){
+        if(testerposition==false){
+            console.log('funciona')
+            testerposition=true;
+            div3d.style.visibility='hidden';
+        }
+    }else if(camera.position.z>=1){
+        if(testerposition==true){
+            div3d.style.visibility='visible'
+            testerposition=false;
+            console.log('testerposition true')
+        }
+        
+    }
 }
 animate();
 
@@ -173,6 +218,13 @@ document.querySelector('.nav').addEventListener('click', event => {
     // console.log(event.target);
     rotateMesh(event.target.getAttribute('data-value'));
 })
+document.querySelector('#freecamerabtn').addEventListener('click', () => {
+    if (freecamera==true){
+        freecamera=false;
+    }else if(freecamera==false){
+        freecamera=true;
+    }
+    })
 
 function rotateMesh (str) {
 
@@ -184,12 +236,15 @@ function rotateMesh (str) {
     }
     if (str === '2') { // Top
         gsap.to(camera.position, {x: cube.position.x, y: cube.position.y+2, z:cube.position.z, duration: 1});
+        
+
+        gsap.to(camera.lookAt, {x: cube.position.x, y: cube.position.y+2, z:cube.position.z, duration: 2});
+
     }
     if (str === '3') { // Side
         gsap.to(camera.position, {x: cube.position.x+2, y: cube.position.y, z:cube.position.z, duration: 1});
     }
 }
-
 
 // CONSOLE LOGS:
 console.log('sizes.width: ')
