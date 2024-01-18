@@ -1,7 +1,9 @@
 import * as THREE from 'three';
 import { gsap } from "gsap";
 import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+// import { TrackballControls } from 'three/addons/controls/TrackballControls.js'
+
 
 
 // DIMENSIONS - to use mainly in the renderers
@@ -9,6 +11,9 @@ const sizes = {
     width: window.innerWidth,
     height:window.innerHeight
 }
+
+
+const canvas = document.querySelector('.bodycanvas')
 
 const intDisplaySizes = {
     width: '480px' ,
@@ -28,7 +33,7 @@ const group = new THREE.Group
 
 
 // WebGL Renderer
-const rendererwebgl = new THREE.WebGLRenderer(); // standard renderer for 3JS
+const rendererwebgl = new THREE.WebGLRenderer({canvas:canvas}); // standard renderer for 3JS
 rendererwebgl.setClearColor(0x123456,0.0)
 rendererwebgl.setSize( sizes.width, sizes.height); // calling the const defined earlier to set the size for the renderer
 rendererwebgl.domElement.style.position = 'absolute' // keeps the renderer from being pushed downwards by other DOM html elements on the page
@@ -37,7 +42,7 @@ rendererwebgl.domElement.style.zIndex = 0; // just to make sure what's the z-ind
 
 
 //CSS3d Renderer - basically the same as WebGL renderer
-const renderercss3d = new CSS3DRenderer();
+const renderercss3d = new CSS3DRenderer({canvas:canvas});
 renderercss3d.setSize( sizes.width, sizes.height );
 renderercss3d.domElement.style.position = 'absolute'
 
@@ -84,15 +89,6 @@ displaywebgl2.rotateX(4);
 scene.add(displaywebgl2)
 
 
-// Reference
-const sphere = new THREE.SphereGeometry(0.05)
-const refball = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({color:'cyan'}))
-scene.add(refball);
-const axesHelper = new THREE.AxesHelper()
-scene.add(axesHelper)
-
-
-
 // Creating elements that will be placed in the CSS3D Renderer
 
 const div3d = document.createElement( 'div' );
@@ -119,15 +115,28 @@ div3d.appendChild( iframe );
 
 
 
+
 const object3d = new CSS3DObject( div3d );
 
 // object3d.scale.set(1/(sizes.width),1/(sizes.width))
 // object3d.scale.set(0.005,0.005)
-object3d.scale.set(1/intDisplaySizes.widthnum,1/intDisplaySizes.heightnum)
+object3d.scale.set(1/intDisplaySizes.widthnum,1/intDisplaySizes.widthnum)
 
 object3d.position.set( 0, 1, 1 );
 object3d.rotateX(-0.5)
 // scene.add(object3d)
+
+// Reference
+const sphere = new THREE.SphereGeometry(0.05)
+const refball = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({color:'cyan'}))
+scene.add(refball);
+const refball2 = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({color:'red'}))
+refball2.position.set(object3d.position.x,object3d.position.y,object3d.position.z)
+scene.add(refball2);
+const axesHelper = new THREE.AxesHelper()
+scene.add(axesHelper)
+
+
 
 
 group.add(object3d)
@@ -143,22 +152,27 @@ scene.add(camera)
 camera.position.z = 2;
 camera.position.y = 1.3;
 camera.position.x = .88;
-camera.lookAt(cube.position);
+// camera.lookAt(cube.position);
+camera.lookAt(refball2.position);
 
 
 // CONTROLS 
-// // const controls = new OrbitControls(camera, scene)
+const controls = new OrbitControls(camera, renderercss3d.domElement)
+controls.maxPolarAngle = Math.PI*0.5
+// const controls = new TrackballControls(camera,canvas)
+
+controls.enableDamping = true;
 // // OrbitControls are not working
 // (if you want to freely move the camera de-select the lines below and also the "Mouse camera controls" inside the animate() function right below)
-    const cursor = {
-        x:0,
-        y:0
-    }
-    window.addEventListener('mousemove', (event) => { 
-        cursor.x=2*event.clientX / sizes.width - 0.5
-        cursor.y= - 3*(event.clientY / sizes.height - 0.5)
-        // console.log(cursor.x + ' , ' + cursor.y)
-        })
+    // const cursor = {
+    //     x:0,
+    //     y:0
+    // }
+    // window.addEventListener('mousemove', (event) => { 
+    //     cursor.x=2*event.clientX / sizes.width - 0.5
+    //     cursor.y= - 3*(event.clientY / sizes.height - 0.5)
+    //     // console.log(cursor.x + ' , ' + cursor.y)
+    //     })
 // // Obs: Camera is updated in animate()
 
 window.addEventListener('camera.position.z', () => {
@@ -169,38 +183,51 @@ window.addEventListener('camera.position.z', () => {
         div3d.style.visibility='visible'
     }
 })
+
 var testerposition = false;
 var freecamera = false;
+
+
 function animate() {
-    camera.lookAt(cube.position);
+    camera.lookAt(refball2.position);
 	requestAnimationFrame( animate );
     
     rendererwebgl.render( scene, camera );
     renderercss3d.render( scene, camera );
     
+    //forcing camera position
+    if(camera.position.y<1){
+        camera.position.y=1;
+    }
+
+
     //Mouse camera controls (to activate, de-comment everything below and also the "controls" section just above
-    // // controls.update();
-    // //Update Camera (manual camera movement - to activate deselect lines below)
-        if(freecamera==true){
-            camera.position.x = cursor.x*10
-        camera.position.y = cursor.y*10
-        camera.position.x = Math.sin(cursor.x * Math.PI * 2) * 3
-        camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 3
-        camera.position.y = cursor.y * 5
-        camera.lookAt(new THREE.Vector3())
-        camera.lookAt(cube.position)
-        }
+    controls.update();
+    // //Update Camera (manual camera movement - to activate deselect one of two group os lines below)
+
+    // Free camera around the 3D objects
+        // if(freecamera==true){
+        // camera.position.x = cursor.x*10
+        // camera.position.y = cursor.y*10
+        // camera.position.x = Math.sin(cursor.x * Math.PI * 2) * 3
+        // camera.position.z = Math.cos(cursor.x * Math.PI * 2) * 3
+        // camera.position.y = cursor.y * 5
+        // camera.lookAt(new THREE.Vector3())
+        // camera.lookAt(cube.position)
+        // }
         
+
+
     //End of Update Camera
 
     // Hiding css3d display
-    if(camera.position.z<1){
+    if(camera.position.z<0.8){
         if(testerposition==false){
             console.log('funciona')
             testerposition=true;
             div3d.style.visibility='hidden';
         }
-    }else if(camera.position.z>=1){
+    }else if(camera.position.z>=0.8){
         if(testerposition==true){
             div3d.style.visibility='visible'
             testerposition=false;
@@ -218,13 +245,13 @@ document.querySelector('.nav').addEventListener('click', event => {
     // console.log(event.target);
     rotateMesh(event.target.getAttribute('data-value'));
 })
-document.querySelector('#freecamerabtn').addEventListener('click', () => {
-    if (freecamera==true){
-        freecamera=false;
-    }else if(freecamera==false){
-        freecamera=true;
-    }
-    })
+// document.querySelector('#freecamerabtn').addEventListener('click', () => {
+//     if (freecamera==true){
+//         freecamera=false;
+//     }else if(freecamera==false){
+//         freecamera=true;
+//     }
+//     })
 
 function rotateMesh (str) {
 
@@ -232,17 +259,17 @@ function rotateMesh (str) {
         gsap.to(camera.position,{x:.88, y:1.3, z:2,duration:.6});        
     }
     if (str === '1') { // Front
-        gsap.to(camera.position, {x: cube.position.x, y: cube.position.y, z:cube.position.z+2, duration: 1});
+        gsap.to(camera.position, {x: object3d.position.x, y: object3d.position.y, z:object3d.position.z+2, duration: 1});
     }
     if (str === '2') { // Top
-        gsap.to(camera.position, {x: cube.position.x, y: cube.position.y+2, z:cube.position.z, duration: 1});
+        gsap.to(camera.position, {x: object3d.position.x+0.1, y: object3d.position.y+2, z:object3d.position.z+0.1, duration: 1});
         
 
-        gsap.to(camera.lookAt, {x: cube.position.x, y: cube.position.y+2, z:cube.position.z, duration: 2});
+        gsap.to(camera.lookAt, {x: object3d.position.x, y: object3d.position.y+2, z:object3d.position.z, duration: 2});
 
     }
     if (str === '3') { // Side
-        gsap.to(camera.position, {x: cube.position.x+2, y: cube.position.y, z:cube.position.z, duration: 1});
+        gsap.to(camera.position, {x: object3d.position.x+2, y: object3d.position.y, z:object3d.position.z, duration: 1});
     }
 }
 
