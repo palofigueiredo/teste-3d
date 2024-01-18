@@ -263,18 +263,6 @@ function animate() {
 
     //End of Update Camera
 
-    function zpos(zcam,ycam,zp,yp,hp,ang){
-        let h = cameraypos-planeypos;
-        let senA=Math.sin(planerotation);
-        let dist = camerazpos-planezpos;
-        let maxdist = Math.sqrt(
-            ((h**2)*(senA**2))/(1-(senA**2))
-        )
-        console.log('camerazpos:'+camerazpos+' , camera ypos:'+cameraypos+' , planezpos:'+planezpos+' , planeypos:'+planeypos+' . dist:'+dist+' , maxdist:'+maxdist);
-        console.log(maxdist);
-
-        return (maxdist);
-    }
 
     function zposB(yp,ycam,ang){
         {
@@ -325,6 +313,9 @@ function rotateMesh (str) {
     }
     if (str === '3') { // Side
         gsap.to(camera.position, {x: object3d.position.x+2, y: object3d.position.y, z:object3d.position.z, duration: 1});
+    }
+    if (str === 'screen') {
+        gsap.to(camera.position, {x: object3d.position.x, y: (object3d.position.y+object3d.position.y*Math.sqrt((Math.sin(screenhtml.rotation.x))**2)), z:(object3d.position.z+object3d.position.z*Math.sqrt((Math.cos(screenhtml.rotation.x))**2)), duration: 1});
     }
 }
 
