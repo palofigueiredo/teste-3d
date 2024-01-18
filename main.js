@@ -5,6 +5,42 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 // import { TrackballControls } from 'three/addons/controls/TrackballControls.js'
 
 
+// Definitions:
+const screenhtml={
+    width:480,
+    height:640,
+    x:1,
+    y:1,
+    z:1,
+    rotation:{
+        x:-0.5,y:0,z:0
+    }
+}
+
+const sizestd = 1;
+
+const box_01 = {
+    width: 1 * sizestd,
+    height: 1 * sizestd,
+    depth: 1 * sizestd,
+    x: 0 * sizestd,
+    y:0 * sizestd,
+    z:0 * sizestd
+}
+box_01.y = (box_01.height/2) * sizestd;
+box_01.z = (box_01.depth/2) * sizestd;
+
+const box_02 = {
+    width: 1 * sizestd,
+    height: 1 * sizestd,
+    depth: 1 * sizestd,
+    x: 0 * sizestd,
+    y:0 * sizestd,
+    z:0 * sizestd
+}
+box_02.y = box_02.height/2 * sizestd;
+box_02.z = box_02.depth/2 * sizestd;
+
 
 // DIMENSIONS - to use mainly in the renderers
 const sizes = {
@@ -16,10 +52,8 @@ const sizes = {
 const canvas = document.querySelector('.bodycanvas')
 
 const intDisplaySizes = {
-    width: '480px' ,
-    height: '640px',
-    widthnum: 480,
-    heightnum:640
+    width: `${screenhtml.width}px`,
+    height: `${screenhtml.height}px`,
 }
 
 const scene = new THREE.Scene(); // Where the objects will be placed in order to be displayed
@@ -56,31 +90,53 @@ document.body.appendChild( renderercss3d.domElement );
 
 
 // Creating the "3D Objects" for the WebGL Renderer - we need a geometry and a material that are to be put together via THREE.Mesh
-const boxgeometry = new THREE.BoxGeometry(1, 1, 1); 
-const material = new THREE.MeshBasicMaterial({color: 0x00ff00, wireframe: true});
+// const boxgeometry = new THREE.BoxGeometry(sizestd, sizestd, sizestd); 
+// const material = new THREE.MeshBasicMaterial({color: 0x00ff00, wireframe: true});
 
-const cube = new THREE.Mesh( boxgeometry, material ); 
-scene.add( cube );
+// const cube = new THREE.Mesh( boxgeometry, material ); 
+// scene.add( cube );
 
+function boxBuilder(width=1,height=1,depth=1,color='white',wframe=false){
+    let newbox = new THREE.BoxGeometry(width,height,depth);
+    let material = new THREE.MeshBasicMaterial({color:color, wireframe:wframe})
+    let builtbox = new THREE.Mesh(newbox, material);
+    return(builtbox);
+}
 
-//Positioning the cube slightly in front of the origin (0,0,0)
-// cube.position.x=0;
-cube.position.y=.5;
-cube.position.z=0.5;
+const cube = boxBuilder(box_01.width,box_01.height,box_01.depth,'green',true);
+scene.add(cube)
+
+cube.position.y=box_01.y;
+cube.position.z=box_01.z;
 
 
 // Creating a plane that will simulate the area where we want to place the display 
-const displaygeom = new THREE.PlaneGeometry(0.5,0.5);
-// const display = new THREE.Mesh(displaygeom, new THREE.MeshBasicMaterial({color:0xdd00dd}))
-const displaywebgl = new THREE.Mesh(displaygeom, new THREE.MeshBasicMaterial({color:0x123456}))
+// const displaygeom = new THREE.PlaneGeometry(0.5,0.5);
+// // const display = new THREE.Mesh(displaygeom, new THREE.MeshBasicMaterial({color:0xdd00dd}))
+// const displaywebgl = new THREE.Mesh(displaygeom, new THREE.MeshBasicMaterial({color:0x123456}))
+// displaywebgl.position.y=1
+// displaywebgl.position.z=0.5
+// displaywebgl.rotateX(-0.4)
+
+function planeBuilder(width=1,height=1,color='white',wframe=false){
+    let newplane = new THREE.PlaneGeometry(width,height);
+    let planematerial = new THREE.MeshBasicMaterial({color:color, wireframe:wframe})
+    let builtplane = new THREE.Mesh(newplane, planematerial);
+    return(builtplane);
+}
+
+const displaywebgl = planeBuilder(0.5,0.5, 'blue', false)
 displaywebgl.position.y=1
 displaywebgl.position.z=0.5
 displaywebgl.rotateX(-0.4)
 
 scene.add(displaywebgl)
 
-const displaygeom2 = new THREE.PlaneGeometry(0.5,0.5);
-const displaywebgl2 = new THREE.Mesh(displaygeom2, new THREE.MeshBasicMaterial({color:0x224466}))
+// const displaygeom2 = new THREE.PlaneGeometry(0.5,0.5);
+// const displaywebgl2 = new THREE.Mesh(displaygeom2, new THREE.MeshBasicMaterial({color:0x224466}))
+
+const displaywebgl2 = planeBuilder(0.5,0.5,0x224466, false)
+
 displaywebgl2.position.y=1
 displaywebgl2.position.z=0.5
 displaywebgl2.position.x=0;
@@ -91,39 +147,37 @@ scene.add(displaywebgl2)
 
 // Creating elements that will be placed in the CSS3D Renderer
 
-const div3d = document.createElement( 'div' );
-div3d.id="div3d";
-div3d.style.width = intDisplaySizes.width;
-div3d.style.height = intDisplaySizes.height;
-div3d.style.backfaceVisibility= 'hidden';
-div3d.style.transformStyle = 'preserve-3d';
+// const div3d = document.createElement( 'div' );
+// div3d.id="div3d";
+// div3d.style.width = intDisplaySizes.width;
+// div3d.style.height = intDisplaySizes.height;
+// div3d.style.backfaceVisibility= 'hidden';
+// div3d.style.transformStyle = 'preserve-3d';
 
 // div3d.style.pointerEvents = 'auto' // not needed, but was recommended to make sure elements in the div will be clickable
-div3d.style.backgroundColor = '#ff111133'; // red-ish with transparency
+// div3d.style.backgroundColor = '#ff111133'; // red-ish with transparency
 
-const iframe = document.createElement( 'iframe' );
-iframe.style.width = intDisplaySizes.width;
-iframe.style.height = intDisplaySizes.height;
+const iframe3d = document.createElement( 'iframe' );
+iframe3d.style.width = intDisplaySizes.width;
+iframe3d.style.height = intDisplaySizes.height;
 // iframe.style.height = '3px';
-iframe.style.border = '1px solid black';
-iframe.style.zIndex = 2;
-iframe.style.pointerEvents = 'auto';
+iframe3d.style.border = '1px solid black';
+iframe3d.style.zIndex = 2;
+iframe3d.style.pointerEvents = 'auto';
 // iframe.src = './iframe3dcontent.html';
-iframe.src = './menu.html';
-iframe.style.backfaceVisibility = 'hidden'
-div3d.appendChild( iframe );
+iframe3d.src = './menu.html';
+iframe3d.style.backfaceVisibility = 'hidden'
+// div3d.appendChild( iframe );
 
 
 
 
-const object3d = new CSS3DObject( div3d );
+const object3d = new CSS3DObject( iframe3d );
 
-// object3d.scale.set(1/(sizes.width),1/(sizes.width))
-// object3d.scale.set(0.005,0.005)
-object3d.scale.set(1/intDisplaySizes.widthnum,1/intDisplaySizes.widthnum)
+object3d.scale.set(1/screenhtml.width,1/screenhtml.width)
 
 object3d.position.set( 0, 1, 1 );
-object3d.rotateX(-0.5)
+object3d.rotateX(screenhtml.rotation.x)
 // scene.add(object3d)
 
 // Reference
@@ -175,17 +229,6 @@ controls.enableDamping = true;
     //     })
 // // Obs: Camera is updated in animate()
 
-window.addEventListener('camera.position.z', () => {
-    if(camera.position.z<1){
-        console.log('funciona')
-        div3d.style.visibility='hidden';
-    }else{
-        div3d.style.visibility='visible'
-    }
-})
-
-var testerposition = false;
-var freecamera = false;
 
 
 function animate() {
@@ -220,21 +263,33 @@ function animate() {
 
     //End of Update Camera
 
-    // Hiding css3d display
-    if(camera.position.z<0.8){
-        if(testerposition==false){
-            console.log('funciona')
-            testerposition=true;
-            div3d.style.visibility='hidden';
-        }
-    }else if(camera.position.z>=0.8){
-        if(testerposition==true){
-            div3d.style.visibility='visible'
-            testerposition=false;
-            console.log('testerposition true')
-        }
-        
+    function zpos(zcam,ycam,zp,yp,hp,ang){
+        let h = cameraypos-planeypos;
+        let senA=Math.sin(planerotation);
+        let dist = camerazpos-planezpos;
+        let maxdist = Math.sqrt(
+            ((h**2)*(senA**2))/(1-(senA**2))
+        )
+        console.log('camerazpos:'+camerazpos+' , camera ypos:'+cameraypos+' , planezpos:'+planezpos+' , planeypos:'+planeypos+' . dist:'+dist+' , maxdist:'+maxdist);
+        console.log(maxdist);
+
+        return (maxdist);
     }
+
+    function zposB(yp,ycam,ang){
+        {
+            return(Math.sqrt((Math.tan(ang)*(ycam-yp))**2));
+        }
+    }
+
+        if(camera.position.z<=(object3d.position.z-zposB(object3d.position.y,camera.position.y,screenhtml.rotation.x))){
+            
+            iframe3d.style.visibility='hidden';
+        }else{
+            iframe3d.style.visibility='visible';
+        }
+    
+    
 }
 animate();
 
