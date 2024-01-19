@@ -3,17 +3,18 @@ import { gsap } from "gsap";
 import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 // import { TrackballControls } from 'three/addons/controls/TrackballControls.js'
-
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
 // Definitions:
 const screenhtml={
-    width:480,
+    width:460,
     height:640,
-    x:1,
-    y:1,
-    z:1,
+    x:0,
+    y:4.3,
+    z:0.19,
     rotation:{
-        x:-0.5,y:0,z:0
+        x:-0.911,y:0,z:0
     }
 }
 
@@ -68,7 +69,7 @@ const group = new THREE.Group
 
 // WebGL Renderer
 const rendererwebgl = new THREE.WebGLRenderer({canvas:canvas}); // standard renderer for 3JS
-rendererwebgl.setClearColor(0x123456,0.0)
+rendererwebgl.setClearColor(0x000011,0.2)
 rendererwebgl.setSize( sizes.width, sizes.height); // calling the const defined earlier to set the size for the renderer
 rendererwebgl.domElement.style.position = 'absolute' // keeps the renderer from being pushed downwards by other DOM html elements on the page
 rendererwebgl.domElement.style.top = 0 // places the renderer on top of the page
@@ -86,8 +87,90 @@ document.body.appendChild( rendererwebgl.domElement );
 
 document.body.appendChild( renderercss3d.domElement );
 
+//Models
+const dracoLoader = new DRACOLoader()
+dracoLoader.setDecoderPath('/draco/')
+
+const gltfLoaders = new GLTFLoader()
+
+gltfLoaders.setDRACOLoader(dracoLoader)
+gltfLoaders.load(
+	'/static/senhas_02.glb',
+	(gltf) =>
+	{
+		const dispenser = gltf.scene;
+        //
+		gltf.scene.position.y = 0//Move Models
+		gltf.scene.rotation.y = Math.PI*-0.5
+		gltf.scene.traverse((child) => {
+            if (child.isMesh) {
+                child.castShadow = true;
+				child.receiveShadow = true;
+            }
+        });
+		
+		scene.add(gltf.scene)
+		
+
+	}
+
+)
+
+//Light
+
+ //Ambiente light
+const light = new THREE.AmbientLight( 0x404040,20 ); // soft white light
+light.castShadow = false;
+
+scene.add( light );
+
+//Directional Light
+const directionalLight = new THREE.DirectionalLight(0xffffff, 20)
+directionalLight.position.y = 10;
+directionalLight.position.z = 10;
+directionalLight.position.x = 7;
+directionalLight.castShadow = true
+directionalLight.shadow.mapSize.width = 1024;
+directionalLight.shadow.mapSize.height = 1024;
+directionalLight.shadow.camera.left = -5;
+directionalLight.shadow.camera.right = 5;
+directionalLight.shadow.camera.top = 5;
+directionalLight.shadow.camera.bottom = -10;
+directionalLight.shadow.camera.near = 0.1;
+directionalLight.shadow.camera.far = 100;
+directionalLight.shadow.bias = -0.001;
+scene.add(directionalLight);
+
+//Directional Light2
+const directionalLight2 = new THREE.DirectionalLight(0xffffff, 20)
+directionalLight2.position.y = 5;
+directionalLight2.position.z = 10;
+directionalLight2.position.x = -4;
+directionalLight2.castShadow = true
+directionalLight2.shadow.mapSize.width = 1024;
+directionalLight2.shadow.mapSize.height = 1024;
+directionalLight2.shadow.camera.left = -5;
+directionalLight2.shadow.camera.right = 5;
+directionalLight2.shadow.camera.top = 5;
+directionalLight2.shadow.camera.bottom = -10;
+directionalLight2.shadow.camera.near = 0.1;
+directionalLight2.shadow.camera.far = 100;
+directionalLight2.shadow.bias = -0.001;
+scene.add(directionalLight2);
 
 
+// Target
+directionalLight.target.position.set(0, 1, 0)
+directionalLight.target.updateWorldMatrix()
+
+scene.add(directionalLight)
+scene.add(directionalLight2)
+
+// const helper = new THREE.DirectionalLightHelper( directionalLight, 3 );
+// scene.add( helper );
+
+rendererwebgl.shadowMap.enabled = true;
+rendererwebgl.shadowMap.type = true;
 
 // Creating the "3D Objects" for the WebGL Renderer - we need a geometry and a material that are to be put together via THREE.Mesh
 // const boxgeometry = new THREE.BoxGeometry(sizestd, sizestd, sizestd); 
@@ -96,18 +179,26 @@ document.body.appendChild( renderercss3d.domElement );
 // const cube = new THREE.Mesh( boxgeometry, material ); 
 // scene.add( cube );
 
-function boxBuilder(width=1,height=1,depth=1,color='white',wframe=false){
-    let newbox = new THREE.BoxGeometry(width,height,depth);
-    let material = new THREE.MeshBasicMaterial({color:color, wireframe:wframe})
-    let builtbox = new THREE.Mesh(newbox, material);
-    return(builtbox);
-}
 
-const cube = boxBuilder(box_01.width,box_01.height,box_01.depth,'green',true);
-scene.add(cube)
 
-cube.position.y=box_01.y;
-cube.position.z=box_01.z;
+// const cube = boxBuilder(box_01.width,box_01.height,box_01.depth,'green',true);
+// scene.add(cube)
+
+// cube.position.y=box_01.y;
+// cube.position.z=box_01.z;
+
+const mult_factor=2;
+const wall_01 = boxBuilder(7*mult_factor/2,2.4*mult_factor,0.2,'#eeeeff',false)
+wall_01.position.x = 0;
+wall_01.position.y = 1.2*mult_factor;
+wall_01.position.z = -2.5*mult_factor/2;
+scene.add(wall_01);
+
+const wall_02 = boxBuilder(0.2,2.4*mult_factor,2.4,'#eeeeff',false)
+wall_02.position.x = 3.5*mult_factor/2;
+wall_02.position.y = 1.2*mult_factor;
+wall_02.position.z = -1.4*mult_factor/2;
+scene.add(wall_02);
 
 
 // Creating a plane that will simulate the area where we want to place the display 
@@ -118,12 +209,7 @@ cube.position.z=box_01.z;
 // displaywebgl.position.z=0.5
 // displaywebgl.rotateX(-0.4)
 
-function planeBuilder(width=1,height=1,color='white',wframe=false){
-    let newplane = new THREE.PlaneGeometry(width,height);
-    let planematerial = new THREE.MeshBasicMaterial({color:color, wireframe:wframe})
-    let builtplane = new THREE.Mesh(newplane, planematerial);
-    return(builtplane);
-}
+
 
 const displaywebgl = planeBuilder(0.5,0.5, 'blue', false)
 displaywebgl.position.y=1
@@ -176,38 +262,43 @@ const object3d = new CSS3DObject( iframe3d );
 
 object3d.scale.set(1/screenhtml.width,1/screenhtml.width)
 
-object3d.position.set( 0, 1, 1 );
+object3d.position.set( screenhtml.x, screenhtml.y, screenhtml.z );
 object3d.rotateX(screenhtml.rotation.x)
 // scene.add(object3d)
 
 // Reference
-const sphere = new THREE.SphereGeometry(0.05)
-const refball = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({color:'cyan'}))
-scene.add(refball);
-const refball2 = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({color:'red'}))
-refball2.position.set(object3d.position.x,object3d.position.y,object3d.position.z)
-scene.add(refball2);
-const axesHelper = new THREE.AxesHelper()
-scene.add(axesHelper)
-
+// const sphere = new THREE.SphereGeometry(0.05)
+// const refball = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({color:'cyan'}))
+// scene.add(refball);
+// const refball2 = new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({color:'red'}))
+// refball2.position.set(object3d.position.x,object3d.position.y,object3d.position.z)
+// scene.add(refball2);
+// const axesHelper = new THREE.AxesHelper()
+// scene.add(axesHelper)
 
 
 
 group.add(object3d)
-group.add(cube)
+
 group.add(displaywebgl)
 
 scene.add(group)
+
+let scale_all = 1;
+
+group.scale.set(scale_all, scale_all,scale_all);
 
 
 //CAMERA
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 10000); // the camera is where the "viewer" is. Has the parameters (vertical angle, aspect ratio, min distance for viewing something, maximum distance for viewing something - objects farther away will not be displayed)
 scene.add(camera)
-camera.position.z = 2;
-camera.position.y = 1.3;
-camera.position.x = .88;
-// camera.lookAt(cube.position);
-camera.lookAt(refball2.position);
+let camera_initial_position={
+    x: object3d.position.x+2,
+    y: object3d.position.y+1.3,
+    z: object3d.position.z+2
+};
+camera.position.set(camera_initial_position.x,camera_initial_position.y, camera_initial_position.z);
+camera.lookAt(object3d.position);
 
 
 // CONTROLS 
@@ -232,7 +323,7 @@ controls.enableDamping = true;
 
 
 function animate() {
-    camera.lookAt(refball2.position);
+    camera.lookAt(object3d.position);
 	requestAnimationFrame( animate );
     
     rendererwebgl.render( scene, camera );
@@ -299,7 +390,12 @@ document.querySelector('.nav').addEventListener('click', event => {
 function rotateMesh (str) {
 
     if (str === '0') { //Reset
-        gsap.to(camera.position,{x:.88, y:1.3, z:2,duration:.6});        
+        gsap.to(camera.position,{
+            x:camera_initial_position.x,
+            y:camera_initial_position.y, 
+            z:camera_initial_position.z,
+            duration:.6
+        });        
     }
     if (str === '1') { // Front
         gsap.to(camera.position, {x: object3d.position.x, y: object3d.position.y, z:object3d.position.z+2, duration: 1});
@@ -315,10 +411,37 @@ function rotateMesh (str) {
         gsap.to(camera.position, {x: object3d.position.x+2, y: object3d.position.y, z:object3d.position.z, duration: 1});
     }
     if (str === 'screen') {
-        gsap.to(camera.position, {x: object3d.position.x, y: (object3d.position.y+object3d.position.y*Math.sqrt((Math.sin(screenhtml.rotation.x))**2)), z:(object3d.position.z+object3d.position.z*Math.sqrt((Math.cos(screenhtml.rotation.x))**2)), duration: 1});
+        let zpos = (object3d.position.z+Math.sqrt((Math.cos(screenhtml.rotation.x))**2));
+        gsap.to(
+            camera.position, {x: object3d.position.x, 
+            y: (object3d.position.y+Math.sqrt((Math.sin(screenhtml.rotation.x))**2)), 
+            z:zpos, duration: 1});
+                
+            let textAlert=
+            'object3d.position.z:'+
+            object3d.position.z+
+            ' , Math.cos(screenhtml.rotation.x):'+
+            Math.cos(screenhtml.rotation.x)+
+            ' , object3d.position.z+Math.sqrt((Math.cos(screenhtml.rotation.x))**2)):'+
+            (object3d.position.z+
+            (Math.cos(screenhtml.rotation.x)))+
+            ' , zpos:'+zpos
+            // window.alert(textAlert)
     }
 }
 
+function boxBuilder(width=1,height=1,depth=1,color='white',wframe=false){
+    let newbox = new THREE.BoxGeometry(width,height,depth);
+    let material = new THREE.MeshBasicMaterial({color:color, wireframe:wframe})
+    let builtbox = new THREE.Mesh(newbox, material);
+    return(builtbox);
+}
+function planeBuilder(width=1,height=1,color='white',wframe=false){
+    let newplane = new THREE.PlaneGeometry(width,height);
+    let planematerial = new THREE.MeshBasicMaterial({color:color, wireframe:wframe})
+    let builtplane = new THREE.Mesh(newplane, planematerial);
+    return(builtplane);
+}
 // CONSOLE LOGS:
 console.log('sizes.width: ')
 console.log(sizes.width)
