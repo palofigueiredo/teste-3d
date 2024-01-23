@@ -71,7 +71,7 @@ const group = new THREE.Group
 // WebGL Renderer
 const rendererwebgl = new THREE.WebGLRenderer({canvas:canvas}); // standard renderer for 3JS
 const rendererwebglbg = new THREE.WebGLRenderer({}); // standard renderer for 3JS
-rendererwebgl.setClearColor(0x000033,0.1)
+rendererwebgl.setClearColor(0xeeeeee,0.0)
 rendererwebgl.setSize( sizes.width, sizes.height); // calling the const defined earlier to set the size for the renderer
 rendererwebgl.domElement.style.position = 'absolute' // keeps the renderer from being pushed downwards by other DOM html elements on the page
 rendererwebgl.domElement.style.top = 0 // places the renderer on top of the page
