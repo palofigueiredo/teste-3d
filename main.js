@@ -2,7 +2,8 @@ import * as THREE from 'three';
 import { gsap } from "gsap";
 import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-// import { TrackballControls } from 'three/addons/controls/TrackballControls.js'
+import { TrackballControls } from 'three/addons/controls/TrackballControls.js'
+import { ArcballControls } from 'three/addons/controls/ArcballControls.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { FirstPersonControls } from 'three/addons/controls/FirstPersonControls.js';
@@ -58,23 +59,27 @@ const scale_group = 0.25;
 const canvas = document.querySelector('.bodycanvas')
 
 const scene = new THREE.Scene(); // Where the objects will be placed in order to be displayed
-const bgscene = new THREE.Scene() // for css3d background elements
+const scenebg = new THREE.Scene() // for css3d background elements
 
 // GRID for reference for a "ground" (horizontal plane at y=0)
-const grid = new THREE.GridHelper();
-scene.add(grid);
+// const grid = new THREE.GridHelper();
+// scene.add(grid);
 
 // Creating a group so it's easier to move various elements around if necessary
 const group = new THREE.Group
 
-
 // WebGL Renderer
 const rendererwebgl = new THREE.WebGLRenderer({canvas:canvas}); // standard renderer for 3JS
-rendererwebgl.setClearColor(0x000011,0.2)
+const rendererwebglbg = new THREE.WebGLRenderer({}); // standard renderer for 3JS
+rendererwebgl.setClearColor(0x000033,0.1)
 rendererwebgl.setSize( sizes.width, sizes.height); // calling the const defined earlier to set the size for the renderer
 rendererwebgl.domElement.style.position = 'absolute' // keeps the renderer from being pushed downwards by other DOM html elements on the page
 rendererwebgl.domElement.style.top = 0 // places the renderer on top of the page
 rendererwebgl.domElement.style.zIndex = 0; // just to make sure what's the z-index of the WebGL Renderer
+rendererwebglbg.setSize( sizes.width, sizes.height);
+rendererwebglbg.domElement.style.position = 'absolute'
+rendererwebglbg.domElement.style.top = 0 
+rendererwebglbg.domElement.style.zIndex = 0;
 
 
 //CSS3d Renderer - basically the same as WebGL renderer
@@ -87,8 +92,11 @@ renderercss3dbg.domElement.style.position = 'absolute'
 
 // placing both renderer on the page
 // ORDER IS IMPORTANT, as we want the elements on the CSS3D Renderer to be interactive, so they need to be "on top" of the WebGL ones.
-document.body.appendChild( rendererwebgl.domElement );
+document.body.appendChild( rendererwebglbg.domElement );
+
 document.body.appendChild( renderercss3dbg.domElement );
+
+document.body.appendChild( rendererwebgl.domElement );
 
 document.body.appendChild( renderercss3d.domElement );
 
@@ -175,11 +183,29 @@ rendererwebgl.shadowMap.enabled = true;
 rendererwebgl.shadowMap.type = true;
 
 
-const wall_01 = planeBuilder(6, 2.4, '#eeeeff',false)
-wall_01.position.x = -1;
-wall_01.position.y = 1.2;
+const wall_01 = planeBuilder(6, 3, '#22aaaa',false)
+wall_01.position.x = 0;
+wall_01.position.y = 1.5;
 wall_01.position.z = -2.5;
-// scene.add(wall_01);
+scenebg.add(wall_01);
+
+const wall_02 = planeBuilder(6, 3, '#aa22aa',false)
+wall_02.position.x = -3
+wall_02.position.y = 1.5;
+wall_02.position.z = 0;
+wall_02.rotation.y = Math.PI/2;
+scenebg.add(wall_02);
+
+const wall_03 = planeBuilder(6, 3, '#aaaa22',false)
+wall_03.position.x = 3
+wall_03.position.y = 1.5;
+wall_03.position.z = 0;
+wall_03.rotation.y = -Math.PI/2;
+scenebg.add(wall_03);
+
+const floor = planeBuilder(6,6, '#dddddd', false)
+floor.rotation.x=-Math.PI/2;
+scenebg.add(floor);
 
 
 
@@ -203,21 +229,48 @@ function css3dElementBuilder(type,width,height){
     cssobject.style.width = `${width}px`;
     cssobject.style.height = `${height}px`;
     cssobject.style.pointerEvents = 'auto';
-    cssobject.style.border = '1px solid black';
+    cssobject.style.border = 'none';
     cssobject.style.backfaceVisibility = 'hidden';
     return cssobject;
 }
-const group_02 = new THREE.Group;
+const group_01 = new THREE.Group;
 const display_01 = css3dElementBuilder('iframe',720,1360);
 const display_01_3d = new CSS3DObject (display_01)
 
 display_01_3d.scale.set(1/720,1/720);
+// display_01_3d.rotation.x = 0.5;
 
-display_01.src = './menu-home.html'
-group_02.add(display_01_3d);
-group_02.position.set(0,0,-2.4)
+display_01.src = './montra_V.html'
+group_01.add(display_01_3d);
+group_01.position.set(1,1.2,-2.5)
 
-bgscene.add(group_02);
+const group_02 = new THREE.Group;
+const display_02 = css3dElementBuilder('iframe', 1360,720);
+display_02.src = './montra_H.html'
+const display_02_3d = new CSS3DObject(display_02);
+display_02_3d.scale.set(1/720,1/720);
+group_02.add(display_02_3d);
+group_02.position.set(-1,1.6,-2.5);
+
+const group_03 = new THREE.Group;
+const display_03 = css3dElementBuilder('iframe', 1360,720);
+display_03.src = './montra_H.html'
+const display_03_3d = new CSS3DObject(display_03);
+display_03_3d.scale.set(1/(720*2),1/(720*2));
+group_03.add(display_03_3d);
+group_03.position.set(2.3,2,-2.1);
+
+group_03.rotation.x=Math.PI*0.1;
+group_03.rotation.y=-Math.PI*.2;
+group_03.rotation.z=Math.PI*.05;
+
+
+
+scenebg.add(group_03);
+scenebg.add(group_02);
+scenebg.add(group_01);
+// scene.add(bgscene);
+// bgscene.add(display_01_3d)
 
 
 
@@ -232,14 +285,20 @@ object3d.rotateX(screenhtml.rotation.x)
 
 
 group.add(object3d)
-scene.add(group)
 
+scene.add(group)
 
 group.scale.set(scale_group, scale_group,scale_group);
 
 //CAMERA
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 10000); // the camera is where the "viewer" is. Has the parameters (vertical angle, aspect ratio, min distance for viewing something, maximum distance for viewing something - objects farther away will not be displayed)
-scene.add(camera)
+// const camerabg = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 10000);
+
+
+
+scene.add(camera);
+scenebg.add(camera);
+
 let camera_initial_position={
     x: object3d.position.x+2,
     y: object3d.position.y+1.3,
@@ -252,23 +311,19 @@ camera.lookAt(camerafocus);
 
 // CONTROLS 
 const controls = new OrbitControls(camera, renderercss3d.domElement)
-// const controls = new FirstPersonControls(camera, renderercss3d.domElement)
-// controls.maxPolarAngle = screenhtml.rotation.x*(-0.89);
+// const controlsbg = new OrbitControls(camera, renderercss3dbg.domElement)
+// const controls = new TrackballControls(camera, renderercss3d.domElement)
+// const controls = new ArcballControls(camera, renderercss3d.domElement)
+controls.movementSpeed = 0.1;
+console.log(screenhtml.rotation.x);
+controls.maxPolarAngle = -screenhtml.rotation.x*.9;
+controls.maxDistance = 2.3;
+
+
 // const controls = new TrackballControls(camera,canvas)
 
-// controls.enableDamping = true;
-// // OrbitControls are not working
-// (if you want to freely move the camera de-select the lines below and also the "Mouse camera controls" inside the animate() function right below)
-    // const cursor = {
-    //     x:0,
-    //     y:0
-    // }
-    // window.addEventListener('mousemove', (event) => { 
-    //     cursor.x=2*event.clientX / sizes.width - 0.5
-    //     cursor.y= - 3*(event.clientY / sizes.height - 0.5)
-    //     // console.log(cursor.x + ' , ' + cursor.y)
-    //     })
-// // Obs: Camera is updated in animate()
+controls.enableDamping = true;
+
 
 
 
@@ -276,18 +331,20 @@ function animate() {
     camera.lookAt(camerafocus);
 	requestAnimationFrame( animate );
     
-    renderercss3dbg.render( bgscene, camera);
+    rendererwebglbg.render( scenebg, camera );
+    renderercss3dbg.render( scenebg, camera);
     rendererwebgl.render( scene, camera );
     renderercss3d.render( scene, camera );
     
     //forcing camera position
-    if(camera.position.y<object3d.position.y*scale_group){
-        camera.position.y=object3d.position.y*scale_group;
-    }
+    // if(camera.position.y<object3d.position.y*scale_group){
+    //     camera.position.y=object3d.position.y*scale_group;
+    // }
 
 
     //Mouse camera controls (to activate, de-comment everything below and also the "controls" section just above
     controls.update();
+    // controlsbg.update();
     // //Update Camera (manual camera movement - to activate deselect one of two group os lines below)
 
     // Free camera around the 3D objects
@@ -352,22 +409,22 @@ function rotateMesh (str) {
         gsap.to(camera.position, {
             x: object3d.position.x*scale_group, 
             y: object3d.position.y*scale_group, 
-            z:object3d.position.z+2*scale_group, 
+            z:object3d.position.z+1*scale_group, 
             duration: 1});
     }
     if (str === '2') { // Top
         gsap.to(camera.position, {
             x: object3d.position.x*scale_group+0.1, 
-            y: object3d.position.y*scale_group+2, 
+            y: object3d.position.y*scale_group+1, 
             z:object3d.position.z*scale_group+0.1, 
             duration: 1});
 
     }
     if (str === '3') { // Side
         gsap.to(camera.position, {
-            x: object3d.position.x*scale_group+2, 
+            x: object3d.position.x*scale_group+1, 
             y: object3d.position.y*scale_group, 
-            z:object3d.position.z*scale_group, 
+            z:object3d.position.z*scale_group+0.3, 
             duration: 1});
     }
     if (str === 'screen') {
