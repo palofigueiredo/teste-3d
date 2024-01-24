@@ -79,7 +79,7 @@ const gltfLoaders = new GLTFLoader()
 
 gltfLoaders.setDRACOLoader(dracoLoader)
 gltfLoaders.load(
-	'/static/senhas_02.glb',
+	'./static/senhas_02.glb',
 	(gltf) =>
 	{
 		const dispenser = gltf.scene;
@@ -190,12 +190,24 @@ boxtv.x=Math.PI*0.15;
 boxtv.rotation.y=-Math.PI*.2;
 boxtv.rotation.z=-Math.PI*.015;
 // scenebg.add(boxtv);
-const frametv = planeBuilder (1.1,0.6,'#404040',false)
-frametv.position.set(2.3,2,-2.1);
-frametv.rotation.x=Math.PI*0.1;
-frametv.rotation.y=-Math.PI*.2;
-frametv.rotation.z=Math.PI*.05;
-scenebg.add(frametv);
+
+
+
+const frametv_01 = planeBuilder (1.1,1.9,'#404040',false)
+frametv_01.position.set(1,1.25,-2.49);
+scenebg.add(frametv_01);
+
+
+const frametv_02 = planeBuilder (2,1.1,'#404040',false)
+frametv_02.position.set(-1,1.6,-2.49);
+scenebg.add(frametv_02);
+
+const frametv_03 = planeBuilder (1.1,0.6,'#404040',false)
+frametv_03.position.set(2.3,2,-2.1);
+frametv_03.rotation.x=Math.PI*0.1;
+frametv_03.rotation.y=-Math.PI*.2;
+frametv_03.rotation.z=Math.PI*.05;
+scenebg.add(frametv_03);
 // group_03.position.set(2.3,2,-2.1);
 // group_03.rotation.x=Math.PI*0.1;
 // group_03.rotation.y=-Math.PI*.2;
@@ -233,7 +245,7 @@ display_01_3d.scale.set(1/720,1/720);
 
 display_01.src = './montra_V.html'
 group_01.add(display_01_3d);
-group_01.position.set(1,1.2,-2.5)
+group_01.position.set(1,1.2,-2.49)
 
 const group_02 = new THREE.Group;
 const display_02 = css3dElementBuilder('iframe', 1360,720);
@@ -241,7 +253,7 @@ display_02.src = './montra_H.html'
 const display_02_3d = new CSS3DObject(display_02);
 display_02_3d.scale.set(1/720,1/720);
 group_02.add(display_02_3d);
-group_02.position.set(-1,1.6,-2.5);
+group_02.position.set(-1,1.6,-2.49);
 
 const group_03 = new THREE.Group;
 const display_03 = css3dElementBuilder('iframe', 1360,720);
