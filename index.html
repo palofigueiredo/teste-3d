@@ -10,6 +10,7 @@
                 margin: 0;
                 line-height: 1;
                 box-sizing: border-box;
+                min-width: 0;
 
             }
 			
@@ -17,6 +18,74 @@
                 font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             }
 
+
+            .popupdiv{
+                position:absolute;
+                margin: auto auto 5vh 5vw;
+                bottom:1em;
+                left: 1em;
+                z-index: 2;
+                min-width: 0;
+                width:fit-content;
+                height:fit-content;
+                width:30vw;
+                opacity:0.9;
+                transition: opacity 0.5s;
+                /* background-color: #ff000044; */
+            }
+            @media only screen and (orientation:portrait) {
+                .popupdiv{
+                    width:100vw;
+                    bottom:0;
+                    left:0;
+                    margin:auto;
+                }
+            }
+            .popupbtn{
+                position: inherit;
+                display:block;
+                padding: 0;
+                text-align: center;
+                top:0.5em;
+                right:0.5em ;
+                width:2em;
+                height:2em;
+                /* margin: auto 2px 2px auto; */
+                border-radius: 1000px;
+                opacity:1;
+                border: 4px solid #555555;
+            }
+            .popupdivint{
+                /* position:absolute; */
+                display:block;
+                bottom:1em;
+                left:1em;
+                background-color: #eeeeee;
+                border: 4px solid #565656;
+                padding: 2em;
+                border-radius: 10px;
+                text-wrap: 1;
+                height:fit-content;
+                margin-top: 2.2em;
+                margin-right: 2.2em;
+                /* transition: opacity 0.5s; */
+                /* max-width:25vw; */
+            }
+            
+            .popupdiv:hover{
+                opacity: 0.5;
+            }
+            .popupdivint:hover{
+                opacity: 0.2;
+            }
+            .popuptitle{
+                display:block;
+            }
+
+            ul{
+                margin-left: 10%;
+                margin-top: 1em;
+            }
             .nav {
                 position: absolute;
                 top: 0;
@@ -24,6 +93,8 @@
                 padding: 1rem;
                 display: flex;
                 gap: .625rem;
+                display:flex;
+                flex-wrap: wrap;
             }
 
             button {
@@ -39,6 +110,9 @@
             button:hover {
                 background-color:hotpink;
             }
+            details summary::-webkit-details-marker {
+                display:none;
+            }
 		</style>
 	</head>
 	<body>
@@ -46,15 +120,15 @@
             
             <div id="container"></div>
             <div class="nav">
-                <button class="btn" data-value="2" style="z-index:3">Top 2</button>
-                <button class="btn" data-value="3" style="z-index:3">Side 3</button>
-                <button class="btn" data-value="1" style="z-index:3">Front 1</button>
+                <button class="btn" data-value="top" style="z-index:3">Top</button>
+                <button class="btn" data-value="side" style="z-index:3">Side</button>
+                <button class="btn" data-value="front" style="z-index:3">Front</button>
                 <button class="btn" data-value="screen" style="z-index:3">Screen</button>
-                <button class="btn" data-value="0" style="z-index:3">Reset 0</button>
-                <!-- <button id="freecamerabtn" style="z-index:3">Mouse Camera</button> -->
+                <button class="btn" data-value="reset" style="z-index:3">Reset</button>
+                <button class="btn" id='info' data-value="info" style="z-index:3">Info</button>
             </div>
+            
             <div class="three"></div>
-        <!-- </canvas> -->
 		<script type="module" src="/main.js" defer></script>
 	</body>
 </html>
