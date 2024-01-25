@@ -79,7 +79,7 @@ const gltfLoaders = new GLTFLoader()
 
 gltfLoaders.setDRACOLoader(dracoLoader)
 gltfLoaders.load(
-	'./src/senhas_02.glb',
+	'./public/senhas_02.glb',
 	(gltf) =>
 	{
 		const dispenser = gltf.scene;
@@ -223,7 +223,7 @@ iframe3d.style.border = '1px solid black';
 iframe3d.style.zIndex = 2;
 iframe3d.style.pointerEvents = 'auto';
 // iframe.src = './iframe3dcontent.html';
-iframe3d.src = './src/menu.html';
+iframe3d.src = './public/menu.html';
 iframe3d.style.backfaceVisibility = 'hidden'
 // div3d.appendChild( iframe );
 
@@ -243,13 +243,13 @@ const display_01_3d = new CSS3DObject (display_01)
 display_01_3d.scale.set(1/720,1/720);
 // display_01_3d.rotation.x = 0.5;
 
-display_01.src = './src/montra_V.html'
+display_01.src = './public/montra_V.html'
 group_01.add(display_01_3d);
 group_01.position.set(1,1.2,-2.49)
 
 const group_02 = new THREE.Group;
 const display_02 = css3dElementBuilder('iframe', 1360,720);
-display_02.src = './src/montra_H.html'
+display_02.src = './public/montra_H.html'
 const display_02_3d = new CSS3DObject(display_02);
 display_02_3d.scale.set(1/720,1/720);
 group_02.add(display_02_3d);
@@ -257,7 +257,7 @@ group_02.position.set(-1,1.6,-2.49);
 
 const group_03 = new THREE.Group;
 const display_03 = css3dElementBuilder('iframe', 1360,720);
-display_03.src = './src/ctv.html'
+display_03.src = './public/ctv.html'
 const display_03_3d = new CSS3DObject(display_03);
 display_03_3d.scale.set(1/(720*2),1/(720*2));
 group_03.add(display_03_3d);
