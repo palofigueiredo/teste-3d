@@ -6,14 +6,25 @@
     <title>Montra_V</title>
     <style>
         body{
-            background-image: url('./CA_MD0347_V1_V-CA-Seguros-Inquerito-Sinistrados.gif');
-            background-repeat: no-repeat;
+            /* background-image: url('./CA_MD0347_V1_V-CA-Seguros-Inquerito-Sinistrados.gif'); */
+            /* background-repeat: no-repeat; */
             /* background-position:center; */
-            background-size: cover;
+            background-size:cover;
+            overflow:hidden;
+        }
+        video{
+            /* position:absolute; */
+            margin:0;
+            height:100%;
+            width:100%;
+            top:0;
+            left:0;
         }
     </style>
 </head>
 <body>
-    
+    <video autoplay muted loop id="myVideo">
+        <source src="./CA_MD0347_V1_V-CA-Seguros-Inquerito-Sinistrados.mp4" type="video/mp4">
+    </video>
 </body>
 </html>

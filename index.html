@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>three.js teste Paulo</title>
+		<title>three.js teste 3D</title>
 		<style>
             * {
                 padding: 0;
@@ -16,8 +16,12 @@
 			
             body {
                 font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+                color:black;
             }
-
+            ul {
+                list-style: none;
+            }
+/*             
 
             .popupdiv{
                 position:absolute;
@@ -31,17 +35,17 @@
                 width:30vw;
                 opacity:0.9;
                 transition: ocacity 0.5s;
-                /* background-color: #ff000044; */
-            }
-            @media only screen and (orientation:portrait) {
+                /* background-color: #ff000044;
+            } */
+            /* @media only screen and (orientation:portrait) {
                 .popupdiv{
                     width:100vw;
                     bottom:0.5em;
                     left:0.5em;
                     margin:auto;
                 }
-            }
-            .popupbtn{
+            } */
+            /* .popupbtn{
                 position: inherit;
                 display:block;
                 padding: 0;
@@ -50,13 +54,13 @@
                 right:0.5em ;
                 width:2em;
                 height:2em;
-                /* margin: auto 2px 2px auto; */
+                /* margin: auto 2px 2px auto;
                 border-radius: 1000px;
                 opacity:1;
                 border: 4px solid #555555;
-            }
-            .popupdivint{
-                /* position:absolute; */
+            } */
+            /* .popupdivint{
+                position:absolute;
                 display:block;
                 bottom:1em;
                 left:1em;
@@ -68,10 +72,10 @@
                 height:fit-content;
                 margin-top: 2.2em;
                 margin-right: 2.2em;
-                /* transition: opacity 0.5s; */
-                /* max-width:25vw; */
-            }
-            
+                transition: opacity 0.5s; 
+                max-width:25vw; 
+            } */
+            /*
             .popupdiv:hover{
                 opacity: 0.5;
             }
@@ -80,9 +84,12 @@
             }
             .popuptitle{
                 display:block;
-            }
+            } */
 
-            ul{
+
+
+
+            /* ul{
                 margin-left: 10%;
                 margin-top: 1em;
             }
@@ -112,23 +119,196 @@
             }
             details summary::-webkit-details-marker {
                 display:none;
+            } */
+
+
+            button {
+                border-radius: 3px;
+                font-family: inherit;
+                font-size: inherit;
+                font-weight: bold;
+                border: 0;
+                background-color: lightblue;
+                padding: 0.625em 1.25em;
+                cursor: pointer;
+                
+                svg {
+                    pointer-events: none;
+                }
             }
+
+                /* Nav */
+
+            .nav {
+                padding: 1.25em;
+                display: grid;
+                gap: 1.25em;
+                position:absolute;
+                width:100vw;
+                container: sidebar / inline-size;
+                z-index:3;
+                
+                .menu {
+                    display: flex;
+                    gap: .313em;
+                    flex-wrap: wrap;
+                }
+                
+                .menu-toggle {
+                    display: none;
+                }
+                
+                .dispensador {
+                    background-color: pink;
+                }
+                
+                button:hover {
+                    background-color: #222;
+                    color: #fff;
+                }
+            }
+
+            /* Mobile menu active */
+            .active .menu-toggle > li:first-of-type {
+                display: block;
+            }
+            .active .menu-toggle > li:last-of-type {
+                display: none;
+            }
+
+                /* Mobile menu inactive */
+            .menu-toggle > li:first-of-type {
+                display: none;
+            }
+            .menu-toggle > li:last-of-type {
+                display: block;
+            }
+
+            @container sidebar (width < 560px) {
+                /*  Show toggle btns  */
+                .nav .menu-toggle {
+                    display: flex;
+                }
+                
+                /* Hide menu */
+                .nav .menu {
+                    display: none;
+                }
+            }
+
+            @container sidebar (min-width: 561px) {
+            /* Show menu*/
+                .active.nav .menu {
+                    display: flex;
+                }
+            }
+
+            .active .menu {
+                display: grid;
+                
+                button {
+                    width: 100%;
+                }
+            }
+
+                /* Dialog */
+
+            dialog {
+                z-index:3;
+                bottom: 0;
+                left: 0;
+                margin: 1.25em;
+                padding: 1.25em;
+                border-radius: .188em;
+                border: 0;
+                box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
+                
+                .content {
+                    display: grid;
+                    gap: .625em;
+                    margin-block-end: 1.25em;
+                }
+                
+                .dialog-title {
+                    font-weight: normal;
+                    color: tomato;
+                }
+                
+                .dialog-list {
+                    display: grid;
+                    gap: .313rem;
+                    
+                    & ::before {
+                    content: "- ";
+                    font-weight: bold;
+                    color: tomato;
+                    }
+                }
+                
+                .btn-dialog-close {
+                    width: 100%;
+                    padding: .625em;
+                }
+            }
+
+
 		</style>
 	</head>
 	<body>
         <canvas class="bodycanvas"></canvas>
             
             <div id="container"></div>
-            <div class="nav">
+            <!-- <div class="nav">
                 <button class="btn" data-value="top" style="z-index:3">Top</button>
                 <button class="btn" data-value="side" style="z-index:3">Side</button>
                 <button class="btn" data-value="front" style="z-index:3">Front</button>
                 <button class="btn" data-value="screen" style="z-index:3">Screen</button>
                 <button class="btn" data-value="reset" style="z-index:3">Reset</button>
                 <button class="btn" id='info' data-value="info" style="z-index:3">Info</button>
-            </div>
+                
+                <button class="btn" id='mh' data-value="mh" style="z-index:3">MH</button>
+                <button class="btn" id='mv' data-value="mv" style="z-index:3">MV</button>
+                <button class="btn" id='ctv' data-value="ctv" style="z-index:3">CTV</button>
+            </div> -->
             
+            <nav class="nav">
+
+            <ul class="menu-toggle">
+                <li class="menu-item">
+                <button class="btn-left">
+                    <svg class="icon-left" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 256 256">
+                    <path fill="currentColor" d="M228 128a12 12 0 0 1-12 12H69l51.52 51.51a12 12 0 0 1-17 17l-72-72a12 12 0 0 1 0-17l72-72a12 12 0 0 1 17 17L69 116h147a12 12 0 0 1 12 12" />
+                    </svg>
+                </button>
+                </li>
+                <li>
+                <button class="btn-menu">
+                    <svg class="icon-menu" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 256 256">
+                    <path fill="currentColor" d="M228 128a12 12 0 0 1-12 12H40a12 12 0 0 1 0-24h176a12 12 0 0 1 12 12M40 76h176a12 12 0 0 0 0-24H40a12 12 0 0 0 0 24m176 104H40a12 12 0 0 0 0 24h176a12 12 0 0 0 0-24" />
+                    </svg>
+                </button>
+                </li>
+            </ul>
+            
+            <ul class="menu">
+                <li><button class="btn dispensador" data-text="0">Branding</button></li>
+                <li><button class="btn dispensador" data-text="1">Menu</button></li>
+                <li><button class="btn dispensador" data-text="2">Senhas</button></li>
+                <li><button class="btn" data-text="3">MDH</button></li>
+                <li><button class="btn" data-text="4">MDV</button></li>
+                <li><button class="btn" data-text="5">CTV</button></li>
+            </ul>
+            </nav>
+            
+            <dialog>
+            <div class="content"></div>
+            <form method="dialog">
+                <button class="btn-dialog-close">Fechar</button>
+            </form>
+            </dialog>
+
             <div class="three"></div>
 		<script type="module" src="./main.js" defer></script>
+		</script>
 	</body>
 </html>

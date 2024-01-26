@@ -5,11 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CTV</title>
     <style>
+        body *{
+            margin:0;
+        }
         body{
-            background-image: url('./CA_CTV0347_V1_H-CA-Seguros-Inquerito-Sinistrados_1.gif');
+            max-width:100vw;
+            max-height:100vh;
+            /* background-image: url('./CA_CTV0347_V1_H-CA-Seguros-Inquerito-Sinistrados_1.gif'); */
             background-repeat: no-repeat;
             /* background-position:center; */
-            background-size: cover;
+            background-size:cover;
+            overflow:hidden;
+        }
+        div{
+            margin:0;
+            overflow:hidden;
+            max-width:100vw;
+        }
+        img{
+            display:block;
+            position:absolute;
+            margin:0;
+            height:100%;
+            width:100%;
+            top:0;
+            left:0;
+        }
+        video{
+            /* position:absolute; */
+            margin:0;
+            height:100%;
+            width:100%;
+            top:0;
+            left:0;
         }
         
     </style>
@@ -18,6 +46,9 @@
     <div>
         <img src="./ctv.png" alt="">
     </div>
+    <video autoplay muted loop id="myVideo">
+        <source src="./CA_CTV0347_V1_H-CA-Seguros-Inquerito-Sinistrados.mp4" type="video/mp4">
+    </video>
     
 </body>
 </html>

@@ -13,7 +13,7 @@ const screenhtml={
     y:4.3,
     z:0.19,
     rotation:{
-        x:-0.911,y:0,z:0
+        x:5.3721,y:0,z:0
     }
 }
 
@@ -79,7 +79,7 @@ const gltfLoaders = new GLTFLoader()
 
 gltfLoaders.setDRACOLoader(dracoLoader)
 gltfLoaders.load(
-	'./public/senhas_02.glb',
+	'./senhas_02.glb',
 	(gltf) =>
 	{
 		const dispenser = gltf.scene;
@@ -193,16 +193,16 @@ boxtv.rotation.z=-Math.PI*.015;
 
 
 
-const frametv_01 = planeBuilder (1.1,1.9,'#404040',false)
-frametv_01.position.set(1,1.25,-2.49);
+const frametv_01 = planeBuilder (1.04,1.81,'#404040',false)
+frametv_01.position.set(1,1.26,-2.49);
 scenebg.add(frametv_01);
 
 
-const frametv_02 = planeBuilder (2,1.1,'#404040',false)
+const frametv_02 = planeBuilder (1.94,1.04,'#404040',false)
 frametv_02.position.set(-1,1.6,-2.49);
 scenebg.add(frametv_02);
 
-const frametv_03 = planeBuilder (1.1,0.6,'#404040',false)
+const frametv_03 = planeBuilder (0.98,0.55,'#404040',false)
 frametv_03.position.set(2.3,2,-2.1);
 frametv_03.rotation.x=Math.PI*0.1;
 frametv_03.rotation.y=-Math.PI*.2;
@@ -223,7 +223,7 @@ iframe3d.style.border = '1px solid black';
 iframe3d.style.zIndex = 2;
 iframe3d.style.pointerEvents = 'auto';
 // iframe.src = './iframe3dcontent.html';
-iframe3d.src = './public/menu.html';
+iframe3d.src = './menu.html';
 iframe3d.style.backfaceVisibility = 'hidden'
 // div3d.appendChild( iframe );
 
@@ -236,42 +236,42 @@ function css3dElementBuilder(type,width,height){
     cssobject.style.backfaceVisibility = 'hidden';
     return cssobject;
 }
-const group_01 = new THREE.Group;
+const group_MV = new THREE.Group;
 const display_01 = css3dElementBuilder('iframe',720,1360);
 const display_01_3d = new CSS3DObject (display_01)
 
 display_01_3d.scale.set(1/720,1/720);
 // display_01_3d.rotation.x = 0.5;
 
-display_01.src = './public/montra_V.html'
-group_01.add(display_01_3d);
-group_01.position.set(1,1.2,-2.49)
+display_01.src = './montra_V.html'
+group_MV.add(display_01_3d);
+group_MV.position.set(1,1.2,-2.49)
 
-const group_02 = new THREE.Group;
+const group_MH = new THREE.Group;
 const display_02 = css3dElementBuilder('iframe', 1360,720);
-display_02.src = './public/montra_H.html'
+display_02.src = './montra_H.html'
 const display_02_3d = new CSS3DObject(display_02);
 display_02_3d.scale.set(1/720,1/720);
-group_02.add(display_02_3d);
-group_02.position.set(-1,1.6,-2.49);
+group_MH.add(display_02_3d);
+group_MH.position.set(-1,1.6,-2.49);
 
-const group_03 = new THREE.Group;
-const display_03 = css3dElementBuilder('iframe', 1360,720);
-display_03.src = './public/ctv.html'
+const group_CTV = new THREE.Group;
+const display_03 = css3dElementBuilder('iframe', 1366,768);
+display_03.src = './ctv.html'
 const display_03_3d = new CSS3DObject(display_03);
 display_03_3d.scale.set(1/(720*2),1/(720*2));
-group_03.add(display_03_3d);
-group_03.position.set(2.3,2,-2.1);
+group_CTV.add(display_03_3d);
+group_CTV.position.set(2.3,2,-2.1);
 
-group_03.rotation.x=Math.PI*0.1;
-group_03.rotation.y=-Math.PI*.2;
-group_03.rotation.z=Math.PI*.05;
+group_CTV.rotation.x=Math.PI*0.1;
+group_CTV.rotation.y=2*Math.PI-Math.PI*.2;
+group_CTV.rotation.z=Math.PI*.05;
 
 
 
-scenebg.add(group_03);
-scenebg.add(group_02);
-scenebg.add(group_01);
+scenebg.add(group_CTV);
+scenebg.add(group_MH);
+scenebg.add(group_MV);
 // scene.add(bgscene);
 // bgscene.add(display_01_3d)
 
@@ -284,6 +284,8 @@ object3d.scale.set(1/screenhtml.width,1/screenhtml.width)
 
 object3d.position.set( screenhtml.x, screenhtml.y, screenhtml.z );
 object3d.rotateX(screenhtml.rotation.x)
+object3d.rotateY(screenhtml.rotation.y)
+object3d.rotateZ(screenhtml.rotation.z)
 
 
 
@@ -311,7 +313,7 @@ camera.position.set(camera_initial_position.x*scale_group,camera_initial_positio
 let camerafocus = new THREE.Vector3(object3d.position.x*scale_group,object3d.position.y*scale_group,object3d.position.z*scale_group);
 // camerafocus = (new THREE.Vector3(2.35,2,-2.2))
 
-camera.lookAt(camerafocus);
+// camera.lookAt(camerafocus);
 
 
 // CONTROLS 
@@ -321,18 +323,26 @@ const controls = new OrbitControls(camera, renderercss3d.domElement)
 // const controls = new ArcballControls(camera, renderercss3d.domElement)
 controls.movementSpeed = 0.1;
 // console.log(screenhtml.rotation.x);
-controls.minPolarAngle = -Math.PI*0.99;
-controls.maxPolarAngle = -screenhtml.rotation.x*.9;
-controls.minAzimuthAngle = -Math.PI/2.1;
-controls.maxAzimuthAngle = Math.PI/2.1;
-controls.maxDistance = 2.3;
+const initcontrols={minpolar:-Math.PI*0.99,
+    maxpolar: Math.PI/2,
+    minazimuth: -Math.PI/2.1,
+    maxazimuth: Math.PI/2.1,
+    maxdist: 2.3
+}
+controls.minPolarAngle = initcontrols.minpolar;
+controls.maxPolarAngle = initcontrols.maxpolar;
+controls.minAzimuthAngle = initcontrols.minazimuth;
+controls.maxAzimuthAngle = initcontrols.maxazimuth;
+controls.maxDistance = initcontrols.maxdist;
 
+controls.target.set(camerafocus.x,camerafocus.y,camerafocus.z);
+console.log('setcontrols target');
 
 // const controls = new TrackballControls(camera,canvas)
 controls.enableDamping = true;
 
 function animate() {
-    camera.lookAt(camerafocus);
+    // camera.lookAt(camerafocus);
 	requestAnimationFrame( animate );
     
     rendererwebglbg.render( scenebg, camera );
@@ -341,9 +351,9 @@ function animate() {
     renderercss3d.render( scene, camera );
     
     // forcing camera position
-    if(camera.position.y<object3d.position.y*scale_group){
-        camera.position.y=object3d.position.y*scale_group+0.25;
-    }
+    // if(camera.position.y<object3d.position.y*scale_group){
+    //     camera.position.y=object3d.position.y*scale_group+0.25;
+    // }
     // if(camera.position.z<object3d.position.z*scale_group){
     //     camera.position.z=object3d.position.z*scale_group+0.25;
     // }
@@ -372,13 +382,41 @@ function rotateMesh (str) {
             z:camera_initial_position.z*scale_group,
             duration:.6
         });        
+        camerafocus.x = object3d.position.x*scale_group;
+        camerafocus.y = object3d.position.y*scale_group;
+        camerafocus.z = object3d.position.z*scale_group;
+        gsap.to(controls.target,{
+            x:camerafocus.x,
+            y:camerafocus.y, 
+            z:camerafocus.z,
+            duration:.6
+        });
+        controls.minPolarAngle = initcontrols.minpolar;
+        controls.maxPolarAngle = initcontrols.maxpolar;
+        controls.minAzimuthAngle = initcontrols.minazimuth;
+        controls.maxAzimuthAngle = initcontrols.maxazimuth;
+        controls.maxDistance = initcontrols.maxdist;        
     }
-    if (str === 'front') { 
+    if (str === '2') {  //front
         gsap.to(camera.position, {
             x: object3d.position.x*scale_group, 
             y: object3d.position.y*scale_group, 
-            z:object3d.position.z+1*scale_group, 
+            z:object3d.position.z+3*scale_group, 
             duration: 1});
+            camerafocus.x = object3d.position.x*scale_group;
+        camerafocus.y = object3d.position.y*scale_group;
+        camerafocus.z = object3d.position.z*scale_group;
+        gsap.to(controls.target,{
+            x:camerafocus.x,
+            y:camerafocus.y, 
+            z:camerafocus.z,
+            duration:.6
+        });
+        controls.minPolarAngle = initcontrols.minpolar;
+        controls.maxPolarAngle = initcontrols.maxpolar;
+        controls.minAzimuthAngle = initcontrols.minazimuth;
+        controls.maxAzimuthAngle = initcontrols.maxazimuth;
+        controls.maxDistance = initcontrols.maxdist;
     }
     if (str === 'top') { 
         gsap.to(camera.position, {
@@ -386,44 +424,147 @@ function rotateMesh (str) {
             y: object3d.position.y*scale_group+1, 
             z:object3d.position.z*scale_group+0.1, 
             duration: 1});
-
+            camerafocus.x = object3d.position.x*scale_group;
+        camerafocus.y = object3d.position.y*scale_group;
+        camerafocus.z = object3d.position.z*scale_group;
+        gsap.to(controls.target,{
+            x:camerafocus.x,
+            y:camerafocus.y, 
+            z:camerafocus.z,
+            duration:.6
+        });
+        controls.minPolarAngle = initcontrols.minpolar;
+        controls.maxPolarAngle = initcontrols.maxpolar;
+        controls.minAzimuthAngle = initcontrols.minazimuth;
+        controls.maxAzimuthAngle = initcontrols.maxazimuth;
+        controls.maxDistance = initcontrols.maxdist;
     }
-    if (str === 'side') { 
+    if (str === '0') { 
         gsap.to(camera.position, {
             x: object3d.position.x*scale_group+1, 
             y: object3d.position.y*scale_group, 
             z:object3d.position.z*scale_group+0.3, 
             duration: 1});
+            camerafocus.x = object3d.position.x*scale_group;
+        camerafocus.y = object3d.position.y*scale_group;
+        camerafocus.z = object3d.position.z*scale_group;
+        gsap.to(controls.target,{
+            x:camerafocus.x,
+            y:camerafocus.y, 
+            z:camerafocus.z,
+            duration:.6
+        });
+        controls.minPolarAngle = initcontrols.minpolar;
+        controls.maxPolarAngle = initcontrols.maxpolar;
+        controls.minAzimuthAngle = initcontrols.minazimuth;
+        controls.maxAzimuthAngle = initcontrols.maxazimuth;
+        controls.maxDistance = initcontrols.maxdist;
     }
-    if (str === 'screen') {
-        let rz = object3d.position.z*scale_group;
-        let ry = object3d.position.y*scale_group;
-        let cz = rz + Math.sqrt(Math.cos(screenhtml.rotation.x)**2)*scale_group*1.5;
-        let cy = ry + Math.sqrt(Math.sin(screenhtml.rotation.x)**2)*scale_group*1.5;
-        let nz = rz+(cz)*scale_group;
-        let ny = ry+((nz)/Math.sqrt(Math.tan(screenhtml.rotation.x)**2));
-        // console.log(ny)
-        let xpos = object3d.position.x*scale_group;
-        let ypos = cy;
-        let zpos = cz;
-        
+    if (str === '1') {  
+    
+        let fc = positionsLookAt(object3d.position,screenhtml.rotation,scale_group,0.4);
         gsap.to(
             camera.position, {
-                x: xpos,
-                y: ypos, 
-                z:zpos,
+                x: fc.x,
+                y: fc.y, 
+                z: fc.z,
                 duration: 1});
+        camerafocus.x = object3d.position.x*scale_group;
+        camerafocus.y = object3d.position.y*scale_group;
+        camerafocus.z = object3d.position.z*scale_group;
+        gsap.to(controls.target,{
+            x:camerafocus.x,
+            y:camerafocus.y, 
+            z:camerafocus.z,
+            duration:.6
+        });
+        controls.minPolarAngle = initcontrols.minpolar;
+        controls.maxPolarAngle = initcontrols.maxpolar;
+        controls.minAzimuthAngle = initcontrols.minazimuth;
+        controls.maxAzimuthAngle = initcontrols.maxazimuth;
+        controls.maxDistance = initcontrols.maxdist;
+    }
+    if (str === '5') {
+        camerafocus.x = group_CTV.position.x;
+        camerafocus.y = group_CTV.position.y;
+        camerafocus.z = group_CTV.position.z;
+        
+
+
+        let ctvp = positionsLookAt(group_CTV.position,group_CTV.rotation,1,1.2)
+
+        gsap.to(
+            camera.position, {
+                x: ctvp.x,
+                y: ctvp.y, 
+                z: ctvp.z,
+                duration: 1});
+        gsap.to(controls.target,{
+            x:camerafocus.x,
+            y:camerafocus.y, 
+            z:camerafocus.z,
+            duration:.6
+        }); 
+        controls.minPolarAngle = Math.PI - 1.9;
+        controls.maxPolarAngle = Math.PI/1.3;
+        controls.minAzimuthAngle = -Math.PI/2.2;
+        controls.maxAzimuthAngle = Math.PI/4.2;
+        controls.maxDistance = 1
+
                 
-            let textAlert=
-            'object3d.position.z:'+
-            object3d.position.z+
-            ' , Math.cos(screenhtml.rotation.x):'+
-            Math.cos(screenhtml.rotation.x)+
-            ' , object3d.position.z+Math.sqrt((Math.cos(screenhtml.rotation.x))**2)):'+
-            (object3d.position.z+
-            (Math.cos(screenhtml.rotation.x)))+
-            ' , zpos:'+zpos;
-            // console.log('distance to center of screen: ' + camera.position.distanceTo(new THREE.Vector3(object3d.position.x*scale_group,object3d.position.y*scale_group,object3d.position.z*scale_group)))
+    }
+    if (str === '3') {
+        camerafocus.x = group_MH.position.x;
+        camerafocus.y = group_MH.position.y;
+        camerafocus.z = group_MH.position.z;
+
+        let mhp = positionsLookAt(group_MH.position,group_MH.rotation,1,1)
+
+        gsap.to(
+            camera.position, {
+                x: mhp.x,
+                y: mhp.y, 
+                z: mhp.z,
+                duration: 1});
+        gsap.to(controls.target,{
+            x:camerafocus.x,
+            y:camerafocus.y, 
+            z:camerafocus.z,
+            duration:.6
+        }); 
+
+        controls.minPolarAngle = Math.PI - 2;
+        controls.maxPolarAngle = Math.PI/1.5;
+        controls.minAzimuthAngle = -Math.PI/2.5;
+        controls.maxAzimuthAngle = Math.PI/2.5;
+        controls.maxDistance = 1.5
+                
+    }
+    if (str === '4') {
+
+        camerafocus.x = group_MV.position.x;
+        camerafocus.y = group_MV.position.y;
+        camerafocus.z = group_MV.position.z;
+
+        let mvp = positionsLookAt(group_MV.position,group_MV.rotation,1,1)
+
+        gsap.to(
+            camera.position, {
+                x: mvp.x,
+                y: mvp.y, 
+                z: mvp.z,
+                duration: 1});
+        gsap.to(controls.target,{
+            x:camerafocus.x,
+            y:camerafocus.y, 
+            z:camerafocus.z,
+            duration:.6
+        }); 
+        controls.minPolarAngle = Math.PI - 2;
+        controls.maxPolarAngle = Math.PI/1.5;
+        controls.minAzimuthAngle = -Math.PI/2.5;
+        controls.maxAzimuthAngle = Math.PI/2.5;
+        controls.maxDistance = 1.5
     }
 }
 
@@ -446,66 +587,162 @@ function zposB(yp,ycam,ang,scale){
     }
 }
 
-let popupshow = '';
-function popUpDescription(){
-    let popupdiv = document.createElement('div');
-    popupdiv.className = 'popupdiv';
-    if(popupshow==true){
-        popupdiv.remove();
-        document.querySelector('#info').style.backgroundColor = '#fff';
-    }
-    let popupdivint = document.createElement('p');
-    popupdivint.className = 'popupdivint';
-    let popupbtn = document.createElement('button')
-    popupbtn.className = 'popupbtn';
-    popupbtn.innerHTML = 'X';
-    popupbtn.addEventListener('click', event => {
-        popupdiv.remove();
-        popupshow=false;
-        document.querySelector('#info').style.backgroundColor = '#fff';
-    })
-    let popuptitle = document.createElement('h2');
-    popuptitle.className = 'popuptitle';
-    popuptitle.innerHTML = `Dispensador senhas XPTO`
-    let popupparagraph = document.createElement('p');
-    popupparagraph.className = 'popupparagraph';
-    popupparagraph.innerHTML = 
-        `<ul>
-            <li>Ecrã touch 600x1024</li>
-            <li>Impressora térmica</li>
-            <li>Sistema Linux</li>
-            <li>Interface web (html5)</li>
-            <li>Personalizável com marca do cliente</li>
-        </ul>`
-    popupdiv.appendChild(popupbtn);
-    popupdivint.appendChild(popuptitle);
-    popupdivint.appendChild(popupparagraph);
-    popupdiv.appendChild(popupdivint);
-    let docbody = document.querySelector('#container');
-    if(!popupshow){
-        docbody.appendChild(popupdiv);
-        document.querySelector('#info').style.backgroundColor = 'hotpink';
-        popupshow=true;
-    }
+// let popupshow = '';
+// function popUpDescription(){
+//     let popupdiv = document.createElement('div');
+//     popupdiv.className = 'popupdiv';
+//     if(popupshow==true){
+//         popupdiv.remove();
+//         document.querySelector('#info').style.backgroundColor = '#fff';
+//     }
+//     let popupdivint = document.createElement('p');
+//     popupdivint.className = 'popupdivint';
+//     let popupbtn = document.createElement('button')
+//     popupbtn.className = 'popupbtn';
+//     popupbtn.innerHTML = 'X';
+//     popupbtn.addEventListener('click', event => {
+//         popupdiv.remove();
+//         popupshow=false;
+//         document.querySelector('#info').style.backgroundColor = '#fff';
+//     })
+//     let popuptitle = document.createElement('h2');
+//     popuptitle.className = 'popuptitle';
+//     popuptitle.innerHTML = `Dispensador senhas XPTO`
+//     let popupparagraph = document.createElement('p');
+//     popupparagraph.className = 'popupparagraph';
+//     popupparagraph.innerHTML = 
+//         `<ul>
+//             <li>Ecrã touch 600x1024</li>
+//             <li>Impressora térmica</li>
+//             <li>Sistema Linux</li>
+//             <li>Interface web (html5)</li>
+//             <li>Personalizável com marca do cliente</li>
+//         </ul>`
+//     popupdiv.appendChild(popupbtn);
+//     popupdivint.appendChild(popuptitle);
+//     popupdivint.appendChild(popupparagraph);
+//     popupdiv.appendChild(popupdivint);
+//     let docbody = document.querySelector('#container');
+//     if(!popupshow){
+//         docbody.appendChild(popupdiv);
+//         document.querySelector('#info').style.backgroundColor = 'hotpink';
+//         popupshow=true;
+//     }
+// }
 
+function positionsLookAt(targetpos,targetrot,scale,dist){
+    let rx = targetpos.x*scale;
+    let ry = targetpos.y*scale;
+    let rz = targetpos.z*scale;
+    
+    let sinx = Math.sin((targetrot.x)) * dist;
+    let cosx = Math.cos((targetrot.x)) * dist;
+    let siny = Math.sin((targetrot.y)) * dist;
+    let cosy = Math.cos((targetrot.y)) * dist;
+    let sinz = Math.sin((targetrot.z)) * dist;
+    let cosz = Math.cos((targetrot.z)) * dist;
+
+    
+    let cx = 0;
+    let cy = 0;
+    let cz = 0;
+
+    // cx = rx + siny - sinz;
+    cx = rx + cosy - cosz
+    cy = ry - sinx + sinz;
+    cz = rz + siny + cosx;
+
+    console.log(ry+ ' ' +rz + ' '+ cy + ' ' +cz);
+
+    let xpos = cx;
+    let ypos = cy;
+    let zpos = cz;
+
+    return(new THREE.Vector3(xpos,ypos,zpos));
 }
+function posval(num){
+    return(Math.sqrt(num**2));
+}
+
 document.querySelector('.nav').addEventListener('click', event => {
     if (!event.target.classList.contains('btn')) return;
     rotateMesh(event.target.getAttribute('data-value')); 
 })
 
-document.querySelector('#info').addEventListener('click', () => {
-    if(popupshow==true){
-        document.querySelector('.popupdiv').remove();
-        popupshow=false;
-        document.querySelector('#info').style.backgroundColor = '#fff';
-    }else{
-        popUpDescription();
-    }
+// document.querySelector('#info').addEventListener('click', () => {
+//     if(popupshow==true){
+//         document.querySelector('.popupdiv').remove();
+//         popupshow=false;
+//         document.querySelector('#info').style.backgroundColor = '#fff';
+//     }else{
+//         popUpDescription();
+//     }
+// })
+
+
+
+const textos_popup = [
+{
+    title: "Branding",
+    content:
+    "<p class='dialog-text'>Personalizável com marca do cliente nas laterais e topo do equipmaneto</p>"
+},
+{
+    title: "Menu",
+    content:
+    "<p class='dialog-text'>Menu HTML. Escolha uma opção para simular uma chamada de senha.</p>"
+},
+{
+    title: "Dispensador de senhas",
+    content:
+    "<ul class='dialog-list'><li>Ecrã touch 600x1024</li><li>Impressora térmica</li><li>Sistema Linux</li><li>Interface web (HTML5)</li><li>Personalizável com marca do cliente</li></ul>"
+},
+{
+    title: "Montra Digital horizontal",
+    content:
+    "<p class='dialog-text'>Montra Digital, no formato Horizontal, com playlist de Campanhas</p>"
+},
+{
+    title: "Montra Digital vertical",
+    content:
+    "<p class='dialog-text'>Montra Digital, no formato Vertical, com playlist de Campanhas</p>"
+},
+{
+    title: "TV Corporativa",
+    content:
+    "<p class='dialog-text'>TV Corporativa com Gestão de Atendimento e playlist de Campanhas e Conteúdos  Institucionais</p>"
+}
+];
+
+
+const dialog = document.querySelector("dialog .content");
+
+function showModalText(str) {
+    dialog.innerHTML = `
+    <h2 class="dialog-title">${textos_popup[str].title}</h2>
+    ${textos_popup[str].content}
+`;    
+}
+
+showModalText(0);
+
+// Menu
+const modal =  document.querySelector("dialog");
+const menu = document.querySelector('.menu');
+menu.addEventListener('click', event => {
+    modal.setAttribute('open', '');
+    showModalText(event.target.getAttribute('data-text'));
+    rotateMesh(event.target.getAttribute('data-text'));
+})
+
+// Menu toggle
+const toggle = document.querySelector('.menu-toggle');
+toggle.addEventListener('click', event => {
+    event.currentTarget.closest('.nav').classList.toggle('active');
 })
 
 
-window.onload=popUpDescription();
+// window.onload=popUpDescription();
 
 
 // CONSOLE LOGS:
